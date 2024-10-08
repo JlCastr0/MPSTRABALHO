@@ -3,6 +3,7 @@ from CTkTable import CTkTable
 from PIL import Image
 import tkinter
 
+#teste
 app = CTk()
 app.geometry("1400x700")
 app.resizable(1, 1)  # Permitir redimensionamento da janela
@@ -38,6 +39,7 @@ def create_sidebar():
     create_sidebar_button(sidebar, "returns_icon.png", "Returns", lambda: show_frame(returns_frame))
     create_sidebar_button(sidebar, "settings_icon.png", "Settings", lambda: show_frame(settings_frame))
     create_sidebar_button(sidebar, "person_icon.png", "Customer", lambda: show_frame(customer_frame))
+    print ("asdadsfa")
 
 # Função para criar as frames principais
 def create_main_frames():
