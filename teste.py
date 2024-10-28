@@ -42,14 +42,14 @@ def create_sidebar():
     create_sidebar_button(sidebar, "person_icon.png", "Clientes", lambda: show_frame(customer_frame))
     create_sidebar_button(sidebar, "seller_icon.png", "Vendedores", lambda: show_frame(seller_frame))
     create_sidebar_button(sidebar, "factory_icon.png", "Fornecedores", lambda: show_frame(factory_frame))
-    create_sidebar_button(sidebar, "settings_icon.png", "Configurações", lambda: show_frame(settings_frame))
+    create_sidebar_button(sidebar, "categories_icon.png", "Categorias", lambda: show_frame(category_frame))
 
 
 
 # Função para criar as frames principais
 def create_main_frames():
     global dashboard_frame, orders_frame, exit_frame, settings_frame, customer_frame, new_order_frame,seller_frame, factory_frame, enter_frame
-    global create_product_frame, search_product_frame, delete_product_frame, edit_product_frame 
+    global create_product_frame, search_product_frame, delete_product_frame, edit_product_frame, category_frame,forgot_password_frame
 
 
     dashboard_frame = CTkFrame(master=main_view, fg_color="white")
@@ -61,6 +61,9 @@ def create_main_frames():
     factory_frame = CTkFrame(master=main_view, fg_color="white")
     customer_frame = CTkFrame(master=main_view, fg_color="white")
     new_order_frame = CTkFrame(master=main_view, fg_color="white") 
+    category_frame = CTkFrame(master=main_view, fg_color="white") 
+    forgot_password_frame = CTkFrame(master=main_view, fg_color="white") 
+    
     #Botoes dos Produtos 
     create_product_frame = CTkFrame(master=main_view, fg_color="white")
     search_product_frame = CTkFrame(master=main_view, fg_color="white")
@@ -70,19 +73,20 @@ def create_main_frames():
 
     for frame in (dashboard_frame, orders_frame, exit_frame, settings_frame, customer_frame, 
                   new_order_frame, seller_frame, factory_frame, enter_frame, create_product_frame, search_product_frame, 
-                  delete_product_frame, edit_product_frame,):
+                  delete_product_frame, edit_product_frame,category_frame, forgot_password_frame):
         frame.place(x=0, y=0, relwidth=1, relheight=1)
 
     # Adicionar título para indicar qual tela está sendo exibida
     CTkLabel(master=dashboard_frame, text="Relatórios", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=orders_frame, text="Produtos", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=exit_frame, text="Saída", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
-    CTkLabel(master=settings_frame, text="Configurações", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
+    CTkLabel(master=settings_frame, text="Categorias", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=seller_frame, text="Vendedores", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=factory_frame, text="Fornecedores", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=customer_frame, text="Clientes", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=enter_frame, text="Entrada", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
     CTkLabel(master=new_order_frame, text="Create New Order", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
+    CTkLabel(master=category_frame, text="Categorias", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="center", pady=50)
 
 # Função para criar a tabela de "Orders"
 def create_orders_table():
@@ -129,12 +133,7 @@ def create_orders_table():
               hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
 
 def create_enter_table():
-    title_frame = CTkFrame(master=enter_frame, fg_color="transparent")
-    title_frame.pack(anchor="n", fill="x", padx=27, pady=(29, 0))
-    CTkLabel(master=title_frame, text="Entrada", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", side="left")
-    CTkButton(master=title_frame, text="+ Nova Entrada", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
-              hover_color="#207244", command=lambda: show_frame(new_order_frame)).pack(anchor="ne", side="right")  # Trocar para o frame "new_order_frame"
-
+    
     table_data = [
     ["Nome do Produto", "Quantidade", "Data de Entrada", "Vendedor"],
     ['Monitor', 10, '23/12/2023', "Carlos Eduardo"],
@@ -156,13 +155,63 @@ def create_enter_table():
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
 
-def create_exit_table():
-    title_frame = CTkFrame(master=exit_frame, fg_color="transparent")
-    title_frame.pack(anchor="n", fill="x", padx=27, pady=(29, 0))
-    CTkLabel(master=title_frame, text="Saída", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", side="left")
-    CTkButton(master=title_frame, text="+ Nova Saída", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
-              hover_color="#207244", command=lambda: show_frame(new_order_frame)).pack(anchor="ne", side="right")  # Trocar para o frame "new_order_frame"
+    # Frame para os botões (agora embaixo da tabela)
+    button_frame = CTkFrame(master=enter_frame, fg_color="transparent")
+    button_frame.pack(anchor="center", side="bottom", pady=(5, 21))
 
+    # Criando os quatro botões
+    CTkButton(master=button_frame, text="Cadastrar Entrada", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(create_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Editar Entrada", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(edit_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Deletar Entrada", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(delete_product_frame)).pack(side="left", padx=5)
+    
+    CTkButton(master=button_frame, text="Buscar Entrada", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
+
+def create_category_table():
+    # Frame para a tabela de checkboxes
+    table_frame = CTkScrollableFrame(master=category_frame, fg_color="transparent", width=300, height=300)
+    table_frame.pack(expand=True, fill="both", padx=27, pady=21)
+
+    # Lista de categorias para os checkboxes
+    categories = ["Eletrônicos", "Vestuário", "Alimentos", "Serviços", "Móveis"]
+    for i in range(20):  # Adiciona categorias para simular muitos elementos
+        categories.append(f"Categoria {i+6}")
+
+    # Dicionário para armazenar as variáveis dos checkboxes
+    checkbox_vars = {}
+
+    # Loop para criar um checkbox para cada categoria na lista
+    for category in categories:
+        var = IntVar()
+        checkbox = CTkCheckBox(table_frame, text=category, variable=var, fg_color='#2A8C55')
+        checkbox.pack(pady=5, anchor="w")
+        checkbox_vars[category] = var
+
+    button_frame = CTkFrame(master=category_frame, fg_color="transparent")
+    button_frame.pack(anchor="center", side="bottom", pady=(5, 21))
+
+    # Criando os quatro botões
+    CTkButton(master=button_frame, text="Cadastrar Categoria", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(create_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Editar Categoria", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(edit_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Deletar Categoria", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(delete_product_frame)).pack(side="left", padx=5)
+    
+    CTkButton(master=button_frame, text="Buscar Categoria", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
+
+
+
+def create_exit_table():
+    
     table_data = [
     ["Produto", "Quantidade", "Tipo de saída", "Data de saída", "Destinatário", "Vendedor"],
     ['Smartphone', 2, 'Venda para consumidor', "23/01/2024", "Larissa Manoela", "Carlos Alberto"],
@@ -185,13 +234,25 @@ def create_exit_table():
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
 
-def create_custumers_table():
-    title_frame = CTkFrame(master=customer_frame, fg_color="transparent")
-    title_frame.pack(anchor="n", fill="x", padx=27, pady=(29, 0))
-    CTkLabel(master=title_frame, text="Clientes", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", side="left")
-    CTkButton(master=title_frame, text="+ Novo Cliente", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
-              hover_color="#207244", command=lambda: show_frame(new_order_frame)).pack(anchor="ne", side="right")  # Trocar para o frame "new_order_frame"
+    # Frame para os botões (agora embaixo da tabela)
+    button_frame = CTkFrame(master=exit_frame, fg_color="transparent")
+    button_frame.pack(anchor="center", side="bottom", pady=(5, 21))
 
+    # Criando os quatro botões
+    CTkButton(master=button_frame, text="Cadastrar Saída", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(create_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Editar Saída", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(edit_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Deletar Saída", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(delete_product_frame)).pack(side="left", padx=5)
+    
+    CTkButton(master=button_frame, text="Buscar Saída", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
+
+def create_custumers_table():
+    
     table_data = [
     ["Nome", "CPF", "Endereço", "Telefone", "Código do Cliente"],
     ['João Lucas', '123.456.789-11', 'R. 12', "(92)99123-3241", 1110],
@@ -214,13 +275,25 @@ def create_custumers_table():
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
 
-def create_factory_table():
-    title_frame = CTkFrame(master=factory_frame, fg_color="transparent")
-    title_frame.pack(anchor="n", fill="x", padx=27, pady=(29, 0))
-    CTkLabel(master=title_frame, text="Fornecedores", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", side="left")
-    CTkButton(master=title_frame, text="+ Novo Fornecedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
-              hover_color="#207244", command=lambda: show_frame(new_order_frame)).pack(anchor="ne", side="right")  # Trocar para o frame "new_order_frame"
+    # Frame para os botões (agora embaixo da tabela)
+    button_frame = CTkFrame(master=customer_frame, fg_color="transparent")
+    button_frame.pack(anchor="center", side="bottom", pady=(5, 21))
 
+    # Criando os quatro botões
+    CTkButton(master=button_frame, text="Cadastrar Cliente", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(create_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Editar Cliente", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(edit_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Deletar Cliente", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(delete_product_frame)).pack(side="left", padx=5)
+    
+    CTkButton(master=button_frame, text="Buscar Cliente", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
+
+def create_factory_table():
+    
     table_data = [
     ["Nome da Empresa", "Nome do Gerente", "CNPJ", "Endereço", "Telefone", "Código do Fornecedor"],
     ['Castro Motores', 'Fernando Castro', '12.345.678/0001-90', "R. 14", "(92)99123-3241", 1110],
@@ -242,13 +315,25 @@ def create_factory_table():
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
 
-def create_sellers_table():
-    title_frame = CTkFrame(master=seller_frame, fg_color="transparent")
-    title_frame.pack(anchor="n", fill="x", padx=27, pady=(29, 0))
-    CTkLabel(master=title_frame, text="Vendedor", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", side="left")
-    CTkButton(master=title_frame, text="+ Novo Vendedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
-              hover_color="#207244", command=lambda: show_frame(new_order_frame)).pack(anchor="ne", side="right")  # Trocar para o frame "new_order_frame"
+    # Frame para os botões (agora embaixo da tabela)
+    button_frame = CTkFrame(master=factory_frame, fg_color="transparent")
+    button_frame.pack(anchor="center", side="bottom", pady=(5, 21))
 
+    # Criando os quatro botões
+    CTkButton(master=button_frame, text="Cadastrar Fornecedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(create_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Editar Fornecedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(edit_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Deletar Fornecedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(delete_product_frame)).pack(side="left", padx=5)
+    
+    CTkButton(master=button_frame, text="Buscar Fornecedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
+
+def create_sellers_table():
+    
     table_data = [
     ["Nome", "CPF", "Endereço", "Telefone", "CTPS", "Data de Nascimento", "Código"],
     ['Maria Lusia', '133.656.749-12', 'R. 12', "(92)99123-3241", 1234567890, "23/12/2004", 1021],
@@ -268,6 +353,23 @@ def create_sellers_table():
     table = CTkTable(master=table_frame, values=table_data, colors=["#E6E6E6", "#EEEEEE"], header_color="#2A8C55", hover_color="#B4B4B4")
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
+
+    # Frame para os botões (agora embaixo da tabela)
+    button_frame = CTkFrame(master=seller_frame, fg_color="transparent")
+    button_frame.pack(anchor="center", side="bottom", pady=(5, 21))
+
+    # Criando os quatro botões
+    CTkButton(master=button_frame, text="Cadastrar Vendedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(create_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Editar Vendedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(edit_product_frame)).pack(side="left", padx=5)
+
+    CTkButton(master=button_frame, text="Deletar Vendedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(delete_product_frame)).pack(side="left", padx=5)
+    
+    CTkButton(master=button_frame, text="Buscar Vendedor", font=("Arial Black", 15), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=lambda: show_frame(search_product_frame)).pack(side="left", padx=5)
 
 
 # Função para criar os botões na tela de Relatórios
@@ -333,165 +435,188 @@ def create_new_order_page():
 
 # Função para criar a página de novo pedido
 def create_create_product_page():
-    CTkLabel(master=create_product_frame, text="Preencher Dados do Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+    CTkLabel(master=create_product_frame, text="Preencher Dados do Vendedor", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
 
-    CTkLabel(master=create_product_frame, text="Nome do Produto", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
+    CTkLabel(master=create_product_frame, text="Nome do Vendedor", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
     CTkEntry(master=create_product_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12,0), padx=27, ipady=10)
 
     grid = CTkFrame(master=create_product_frame, fg_color="transparent")
     grid.pack(fill="both", padx=27, pady=(31,0))
 
-    CTkLabel(master=grid, text="Custo de Compra", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=0, sticky="w")
+    CTkLabel(master=grid, text="CPF", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=0, sticky="w")
     CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=0, ipady=10)
 
-    CTkLabel(master=grid, text="Preço Sugerido", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=1, sticky="w", padx=(25,0))
+    CTkLabel(master=grid, text="Telefone", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=1, sticky="w", padx=(25,0))
     CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=1, ipady=10, padx=(24,0))
 
-    CTkLabel(master=grid, text="Categoria", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=2, column=0, sticky="w", pady=(38, 0))
+    CTkLabel(master=grid, text="CTPS", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=3, sticky="w",padx=(25,0))
+    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=3, ipady=10,padx=(24,0))
 
-    # Lista de categorias
-    status_options = ["Eletrônico", "Vestimenta", "Serviço"]
-    status_var = tkinter.StringVar(value=status_options[0])  # Define o valor padrão como o primeiro da lista
-    CTkOptionMenu(master=grid, variable=status_var, values=status_options, font=("Arial Bold", 14), text_color="#52A476", fg_color="#F0F0F0").grid(row=3, column=0, sticky="w", pady=(16,0))
 
-    CTkLabel(master=grid, text="Quantidade", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=4, column=0, sticky="w", pady=(42, 0))
+    # Ajuste para colocar Endereço e Senha lado a lado na mesma linha
+    CTkLabel(master=grid, text="Endereço", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=2, column=0, sticky="w", pady=(42, 0))
+    address_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
+    address_entry.grid(row=3, column=0, pady=(16,0), sticky="w")
 
-    # Campo de entrada numérica para a quantidade
-    quantity_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)
-    quantity_entry.grid(row=5, column=0, pady=(21,0), sticky="w")
+    CTkLabel(master=grid, text="Senha", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=2, column=1, sticky="w", pady=(42, 0), padx=(25,0))
+    password_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
+    password_entry.grid(row=3, column=1, pady=(16,0), sticky="w", padx=(25,0))
 
-    # Estoque Máximo
-    CTkLabel(master=grid, text="Estoque Máximo", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=2, column=1, sticky="w", pady=(42, 0), padx=(25,0))
-    max_stock_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)  # Entrada pequena
-    max_stock_entry.grid(row=3, column=1, pady=(16,0), sticky="w")
+    # Ajuste para colocar Data de Nascimento e Permissão de Admin lado a lado na mesma linha
+    CTkLabel(master=grid, text="Data de Nascimento", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=4, column=0, sticky="w", pady=(42, 0))
+    birth_date_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
+    birth_date_entry.grid(row=5, column=0, pady=(16,0), sticky="w")
 
-    # Estoque Mínimo
-    CTkLabel(master=grid, text="Estoque Mínimo", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=4, column=1, sticky="w", pady=(42, 0), padx=(25,0))
-    min_stock_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)  # Entrada pequena
-    min_stock_entry.grid(row=5, column=1, pady=(16,0), sticky="w")
+    # Checkbox para Permissão de Admin
+    CTkLabel(master=grid, text="Permissão de Admin", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=4, column=1, sticky="w", pady=(42, 0), padx=(25,0))
+    admin_permission_checkbox = CTkCheckBox(master=grid, text="", fg_color="#2A8C55")
+    admin_permission_checkbox.grid(row=5, column=1, sticky="w", padx=(25,0))
 
     actions = CTkFrame(master=create_product_frame, fg_color="transparent")
-    actions.pack(fill="both", pady=(20, 0))  # Adicione um espaço superior
-    
-    CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto cadastrado")).pack(side="left", anchor="se", pady=(30,0), padx=(0, 10))
+    actions.pack(fill="x", pady=(20, 0), padx=27)
 
-    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30,0), padx=(10,27))
+    # Botões de Confirmar e Cancelar
+    CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto cadastrado")).pack(side="left", pady=(30,0), padx=(0, 10))
 
+    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", pady=(30,0), padx=(10,0))
 
 def create_search_product_page():
-    CTkLabel(master=search_product_frame, text="Buscar Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+    CTkLabel(master=search_product_frame, text="Buscar Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29, 0), padx=27)
 
-    CTkLabel(master=search_product_frame, text="Nome do Produto", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
-    CTkEntry(master=search_product_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12,0), padx=27, ipady=10)
+    CTkLabel(master=search_product_frame, text="Nome do Produto", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25, 0), padx=27)
+    CTkEntry(master=search_product_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12, 0), padx=27, ipady=10)
 
     grid = CTkFrame(master=search_product_frame, fg_color="transparent")
-    grid.pack(fill="both", padx=27, pady=(31,0))
+    grid.pack(fill="both", padx=27, pady=(31, 0))
 
-    CTkLabel(master=grid, text="Código do Produto", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=0, sticky="w")
-    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=0, ipady=10)
-   
 
     actions = CTkFrame(master=search_product_frame, fg_color="transparent")
-    actions.pack(fill="both", pady=(20, 0))  # Adicione um espaço superior
+    actions.pack(fill="x", pady=(20, 0), padx=27)
 
-    table_data = [
-        ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Estoque Mínimo", "Estoque Máximo"],
-        ['3833', 'Smartphone', 'Eletrônico', 1000, 2000, 10, 150],
-        
-    ]
+    # Botões na seção de ações
+    CTkButton(master=actions, text="Buscar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto buscado")).pack(side="left", pady=(30, 0), padx=(0, 10))
 
-    # Frame para a tabela
-    table_frame = CTkScrollableFrame(master=search_product_frame, fg_color="transparent")
-    table_frame.pack(expand=True, fill="both", padx=27, pady=21)
-    table = CTkTable(master=table_frame, values=table_data, colors=["#E6E6E6", "#EEEEEE"], header_color="#2A8C55", hover_color="#B4B4B4")
-    table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
-    table.pack(expand=True)
-
-        
-    CTkButton(master=actions, text="Buscar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto cadastrado")).pack(side="left", anchor="se", pady=(30,0), padx=(0, 10))
-
-    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30,0), padx=(10,27))
+    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", pady=(30, 0), padx=(10, 27))
 
 
 def create_delete_product_page():
-    CTkLabel(master=delete_product_frame, text="Deletar Produto Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+    CTkLabel(master=delete_product_frame, text="Deletar Fornecedor", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
 
-    CTkLabel(master=delete_product_frame, text="Nome do Produto", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
+    CTkLabel(master=delete_product_frame, text="Nome do Fornecedor", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
     CTkEntry(master=delete_product_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12,0), padx=27, ipady=10)
 
     grid = CTkFrame(master=delete_product_frame, fg_color="transparent")
     grid.pack(fill="both", padx=27, pady=(31,0))
 
-    CTkLabel(master=grid, text="Código do Produto", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=0, sticky="w")
-    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=0, ipady=10)
-   
-
+    
     actions = CTkFrame(master=delete_product_frame, fg_color="transparent")
-    actions.pack(fill="both", pady=(20, 0))  # Adicione um espaço superior
+    actions.pack(fill="x", pady=(20, 0), padx=27)  # Ajuste de espaçamento com o Entry
 
-    table_data = [
-        ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Estoque Mínimo", "Estoque Máximo"],
-        ['3833', 'Smartphone', 'Eletrônico', 1000, 2000, 10, 150],
-        
-    ]
+    # Dados da tabela
+    
 
-    # Frame para a tabela
-    table_frame = CTkScrollableFrame(master=delete_product_frame, fg_color="transparent")
-    table_frame.pack(expand=True, fill="both", padx=27, pady=21)
-    table = CTkTable(master=table_frame, values=table_data, colors=["#E6E6E6", "#EEEEEE"], header_color="#2A8C55", hover_color="#B4B4B4")
-    table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
-    table.pack(expand=True)
 
-        
-    CTkButton(master=actions, text="Buscar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto cadastrado")).pack(side="left", anchor="se", pady=(30,0), padx=(0, 10))
 
-    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30,0), padx=(10,27))
+    # Botões organizados e alinhados no frame de ações
+    CTkButton(master=actions, text="Buscar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto buscado")).pack(side="left", pady=(30,0), padx=(0, 10))
 
-    CTkButton(master=actions, text="Deletar", width=150, font=("Arial Bold", 17), hover_color="#c0392b", fg_color="#e74c3c", text_color="#fff", command=lambda: print("Produto deletado")).pack(side="left", anchor="se", pady=(30,0), padx=(10, 10))
-
+    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", pady=(30,0), padx=(10, 10))
 
 def create_edit_product_page():
-    CTkLabel(master=edit_product_frame, text="Editar Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+    CTkLabel(master=edit_product_frame, text="Editar Fornecedor", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
 
-    CTkLabel(master=edit_product_frame, text="Nome do Produto", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
+    CTkLabel(master=edit_product_frame, text="Nome do Fornecedor", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
     CTkEntry(master=edit_product_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12,0), padx=27, ipady=10)
 
     grid = CTkFrame(master=edit_product_frame, fg_color="transparent")
     grid.pack(fill="both", padx=27, pady=(31,0))
 
-    CTkLabel(master=grid, text="Código do Produto", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=0, sticky="w")
-    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=0, ipady=10)
-   
 
     actions = CTkFrame(master=edit_product_frame, fg_color="transparent")
-    actions.pack(fill="both", pady=(20, 0))  # Adicione um espaço superior
+    actions.pack(fill="x", pady=(20, 0), padx=27)  # Ajuste o espaçamento com o Entry
 
-    table_data = [
-        ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Estoque Mínimo", "Estoque Máximo"],
-        ['3833', 'Smartphone', 'Eletrônico', 1000, 2000, 10, 150],
-        
-    ]
+    # Alinha os botões com o Entry acima, mantendo-os lado a lado
+    CTkButton(master=actions, text="Buscar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: show_frame(create_product_frame)).pack(side="left", pady=(30,0), padx=(0, 10))
 
-    # Frame para a tabela
-    table_frame = CTkScrollableFrame(master=edit_product_frame, fg_color="transparent")
-    table_frame.pack(expand=True, fill="both", padx=27, pady=21)
-    table = CTkTable(master=table_frame, values=table_data, colors=["#E6E6E6", "#EEEEEE"], header_color="#2A8C55", hover_color="#B4B4B4")
-    table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
-    table.pack(expand=True)
+    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", pady=(30,0), padx=(10,0))
 
-        
-    CTkButton(master=actions, text="Buscar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto cadastrado")).pack(side="left", anchor="se", pady=(30,0), padx=(0, 10))
+def create_login_screen():
+    global login_frame
 
-    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30,0), padx=(10,27))
+    login_frame = CTkFrame(master=main_view, fg_color="white")
+    # Frame principal da tela de login
+    login_frame.place(relwidth=1, relheight=1)
 
-    CTkButton(master=actions, text="Editar", width=150, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: show_frame(create_product_frame)).pack(side="left", anchor="se", pady=(30,0), padx=(10, 10))
+    # Título
+    CTkLabel(master=login_frame, text="Login", font=("Arial Black", 25), text_color="#2A8C55").pack(pady=(50, 20))
+
+    # Campo de entrada para o e-mail
+    CTkLabel(master=login_frame, text="E-mail", font=("Arial", 14), text_color="#52A476").pack(pady=(10, 5))
+    email_entry = CTkEntry(master=login_frame, fg_color="#F0F0F0", width=300)
+    email_entry.pack(pady=(0, 20))
+
+    # Campo de entrada para a senha
+    CTkLabel(master=login_frame, text="Senha", font=("Arial", 14), text_color="#52A476").pack(pady=(10, 5))
+    password_entry = CTkEntry(master=login_frame, fg_color="#F0F0F0", show="*", width=300)
+    password_entry.pack(pady=(0, 20))
+
+    # Função para validar o login
+    def validate_login():
+        email = email_entry.get()
+        password = password_entry.get()
+        if email == "" and password == "":
+            create_sidebar()
+            show_frame(orders_frame)  # Redireciona para a tela de Produtos
+            print("teste")
+        else:
+            CTkLabel(master=login_frame, text="Credenciais inválidas!", font=("Arial", 12), text_color="red").pack()
+
+    # Função para cadastro
+    def open_registration():
+        CTkLabel(master=login_frame, text="Tela de Cadastro em construção...", font=("Arial", 12), text_color="#52A476").pack(pady=(20, 0))
+
+    # Função para recuperação de senha
+    def forgot_password():
+        show_frame(forgot_password_frame)
+
+    # Botão de login
+    CTkButton(master=login_frame, text="Login", font=("Arial Bold", 14), text_color="#fff", fg_color="#2A8C55",
+              hover_color="#207244", command=validate_login).pack(pady=(20, 10))
+
+    # Botões Cadastrar e Esqueci minha senha
+    button_frame = CTkFrame(master=login_frame, fg_color="transparent")
+    button_frame.pack(pady=(10, 0))
+
+    CTkButton(master=button_frame, text="Cadastrar", font=("Arial", 12), text_color="#2A8C55", fg_color="transparent",
+              hover_color="#eeeeee", command=open_registration).pack(side="left", padx=10)
+    CTkButton(master=button_frame, text="Esqueci minha senha", font=("Arial", 12), text_color="#2A8C55", fg_color="transparent",
+              hover_color="#eeeeee", command=forgot_password).pack(side="left", padx=10)
+
+def create_forgot_password():
+    CTkLabel(master=forgot_password_frame, text="Esqueci Minha Senha", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+
+    CTkLabel(master=forgot_password_frame, text="Email", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
+    CTkEntry(master=forgot_password_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12,0), padx=27, ipady=10)
+
+    
+
+    actions = CTkFrame(master=forgot_password_frame, fg_color="transparent")
+    actions.pack(fill="x", pady=(20, 0), padx=27)  # Ajuste o espaçamento com o Entry
+
+    # Alinha os botões com o Entry acima, mantendo-os lado a lado
+    CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("confirmado")).pack(side="left", pady=(30,0), padx=(0, 10))
+
+    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: login_frame.tkraise()).pack(side="left", pady=(30,0), padx=(10,0))
 
 
 # Inicialização principal
 main_view = CTkFrame(master=app, fg_color="#fff", corner_radius=0)
 main_view.pack(fill="both", side="right", expand=True, padx=(27, 0), pady=(22, 22))
 
-create_sidebar()
+
+
+
+
 create_main_frames()
 create_orders_table()
 #Telas do Produto
@@ -507,8 +632,12 @@ create_sellers_table()
 create_factory_table()
 create_exit_table()
 create_enter_table()
+create_forgot_password()
+
+create_category_table()
+create_login_screen()
+
 
 # Exibir a tela inicial (Orders)
-show_frame(orders_frame)
 
 app.mainloop()
