@@ -3,6 +3,11 @@ from CTkTable import CTkTable
 from PIL import Image
 import tkinter
 
+
+table_data = [
+    ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Quantidade"]
+]
+
 #teste
 app = CTk()
 app.geometry("1400x700")
@@ -91,29 +96,18 @@ def create_main_frames():
 # Função para criar a tabela de "Orders"
 def create_orders_table():
     
-    # Título da tabela (apenas uma vez)
-
-    # Dados da tabela
-    table_data = [
-        ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Estoque Mínimo", "Estoque Máximo"],
-        ['3833', 'Smartphone', 'Eletrônico', 1000, 2000, 10, 150],
-        ['4822', 'Notebook', 'Eletrônico', 2500, 4000, 5, 50],
-        ['5739', 'Cafeteira', 'Eletrodoméstico', 150, 300, 20, 100],
-        ['6388', 'Smart TV', 'Eletrônico', 1800, 3500, 7, 80],
-        ['7499', 'Geladeira', 'Eletrodoméstico', 2500, 5000, 4, 30],
-        ['8601', 'Fone de Ouvido', 'Acessório', 50, 120, 50, 200],
-        ['9102', 'Teclado', 'Acessório', 80, 150, 30, 150],
-        ['1023', 'Máquina de Lavar', 'Eletrodoméstico', 1800, 3800, 3, 25],
-        ['1154', 'Ventilador', 'Eletrodoméstico', 70, 150, 25, 200],
-        ['1275', 'Ar Condicionado', 'Eletrodoméstico', 2000, 4200, 2, 20]
-    ]
-
-    # Frame para a tabela
+    global table
     table_frame = CTkScrollableFrame(master=orders_frame, fg_color="transparent")
     table_frame.pack(expand=True, fill="both", padx=27, pady=21)
+
+    # Criar tabela com os dados iniciais
     table = CTkTable(master=table_frame, values=table_data, colors=["#E6E6E6", "#EEEEEE"], header_color="#2A8C55", hover_color="#B4B4B4")
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
+
+    # Salvar o frame e a tabela para reconstrução
+    table_frame.table = table
+    table_frame.pack_frame = table_frame
 
     # Frame para os botões (agora embaixo da tabela)
     button_frame = CTkFrame(master=orders_frame, fg_color="transparent")
@@ -434,52 +428,68 @@ def create_new_order_page():
     CTkButton(master=actions, text="Creaate", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30,0), padx=(0,27))
 
 # Função para criar a página de novo pedido
-def create_create_product_page():
-    CTkLabel(master=create_product_frame, text="Preencher Dados do Vendedor", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+def update_orders_table():
+    """Atualiza a tabela após inserir novos dados."""
+    global table_data, table
 
-    CTkLabel(master=create_product_frame, text="Nome do Vendedor", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25,0), padx=27)
-    CTkEntry(master=create_product_frame, fg_color="#F0F0F0", border_width=0).pack(fill="x", pady=(12,0), padx=27, ipady=10)
+    # Limpa e recria a tabela com os novos dados
+    table.pack_forget()  # Remove a tabela antiga
+    table = CTkTable(master=table.master, values=table_data, colors=["#E6E6E6", "#EEEEEE"], header_color="#2A8C55", hover_color="#B4B4B4")
+    table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
+    table.pack(expand=True)
+
+def create_create_product_page():
+    CTkLabel(master=create_product_frame, text="Preencher Dados do Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29, 0), padx=27)
+
+    # Campos de entrada
+    CTkLabel(master=create_product_frame, text="Nome do Produto", font=("Arial Bold", 17), text_color="#52A476").pack(anchor="nw", pady=(25, 0), padx=27)
+    product_name_entry = CTkEntry(master=create_product_frame, fg_color="#F0F0F0", border_width=0)
+    product_name_entry.pack(fill="x", pady=(12, 0), padx=27, ipady=10)
 
     grid = CTkFrame(master=create_product_frame, fg_color="transparent")
-    grid.pack(fill="both", padx=27, pady=(31,0))
+    grid.pack(fill="both", padx=27, pady=(31, 0))
 
-    CTkLabel(master=grid, text="CPF", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=0, sticky="w")
-    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=0, ipady=10)
+    CTkLabel(master=grid, text="Custo de Compra", font=("Arial Bold", 17), text_color="#52A476").grid(row=0, column=0, sticky="w")
+    cost_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
+    cost_entry.grid(row=1, column=0, ipady=10)
 
-    CTkLabel(master=grid, text="Telefone", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=1, sticky="w", padx=(25,0))
-    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=1, ipady=10, padx=(24,0))
+    CTkLabel(master=grid, text="Preço Sugerido", font=("Arial Bold", 17), text_color="#52A476").grid(row=0, column=1, sticky="w", padx=(25, 0))
+    price_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
+    price_entry.grid(row=1, column=1, ipady=10, padx=(24, 0))
 
-    CTkLabel(master=grid, text="CTPS", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=0, column=3, sticky="w",padx=(25,0))
-    CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300).grid(row=1, column=3, ipady=10,padx=(24,0))
+    CTkLabel(master=grid, text="Categoria", font=("Arial Bold", 17), text_color="#52A476").grid(row=2, column=0, sticky="w", pady=(38, 0))
+    category_options = ["Eletrônico", "Vestimenta", "Serviço"]
+    category_var = tkinter.StringVar(value=category_options[0])
+    CTkOptionMenu(master=grid, variable=category_var, values=category_options, font=("Arial Bold", 14), text_color="#52A476", fg_color="#F0F0F0").grid(row=3, column=0, sticky="w", pady=(16, 0))
 
-
-    # Ajuste para colocar Endereço e Senha lado a lado na mesma linha
-    CTkLabel(master=grid, text="Endereço", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=2, column=0, sticky="w", pady=(42, 0))
-    address_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
-    address_entry.grid(row=3, column=0, pady=(16,0), sticky="w")
-
-    CTkLabel(master=grid, text="Senha", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=2, column=1, sticky="w", pady=(42, 0), padx=(25,0))
-    password_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
-    password_entry.grid(row=3, column=1, pady=(16,0), sticky="w", padx=(25,0))
-
-    # Ajuste para colocar Data de Nascimento e Permissão de Admin lado a lado na mesma linha
-    CTkLabel(master=grid, text="Data de Nascimento", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=4, column=0, sticky="w", pady=(42, 0))
-    birth_date_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=300)
-    birth_date_entry.grid(row=5, column=0, pady=(16,0), sticky="w")
-
-    # Checkbox para Permissão de Admin
-    CTkLabel(master=grid, text="Permissão de Admin", font=("Arial Bold", 17), text_color="#52A476", justify="left").grid(row=4, column=1, sticky="w", pady=(42, 0), padx=(25,0))
-    admin_permission_checkbox = CTkCheckBox(master=grid, text="", fg_color="#2A8C55")
-    admin_permission_checkbox.grid(row=5, column=1, sticky="w", padx=(25,0))
+    CTkLabel(master=grid, text="Quantidade", font=("Arial Bold", 17), text_color="#52A476").grid(row=4, column=0, sticky="w", pady=(42, 0))
+    quantity_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)
+    quantity_entry.grid(row=5, column=0, pady=(21, 0), sticky="w")
 
     actions = CTkFrame(master=create_product_frame, fg_color="transparent")
-    actions.pack(fill="x", pady=(20, 0), padx=27)
+    actions.pack(fill="both", pady=(20, 0))
 
-    # Botões de Confirmar e Cancelar
-    CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("Produto cadastrado")).pack(side="left", pady=(30,0), padx=(0, 10))
+    # Função para adicionar o produto
+    def add_product():
+        product_name = product_name_entry.get()
+        cost = cost_entry.get()
+        price = price_entry.get()
+        category = category_var.get()
+        quantity = quantity_entry.get()
 
-    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", pady=(30,0), padx=(10,0))
+        if product_name and cost and price and category and quantity:
+            try:
+                # Atualiza a lista de dados
+                table_data.append([len(table_data), product_name, category, cost, price, quantity])
+                update_orders_table()  # Reconstrói a tabela
+                show_frame(orders_frame)  # Volta para a tela de produtos
+            except Exception as e:
+                print(f"Erro ao adicionar o produto: {e}")
+        else:
+            print("Preencha todos os campos para cadastrar o produto.")
 
+    CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=add_product).pack(side="left", anchor="se", pady=(30, 0), padx=(20, 10))
+    CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30, 0), padx=(10, 27))
 def create_search_product_page():
     CTkLabel(master=search_product_frame, text="Buscar Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29, 0), padx=27)
 
