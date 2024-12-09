@@ -469,7 +469,6 @@ def create_create_product_page():
     actions = CTkFrame(master=create_product_frame, fg_color="transparent")
     actions.pack(fill="both", pady=(20, 0))
 
-    # Função para adicionar o produto
     def add_product():
         product_name = product_name_entry.get()
         cost = cost_entry.get()
@@ -477,11 +476,40 @@ def create_create_product_page():
         category = category_var.get()
         quantity = quantity_entry.get()
 
+        # Verificações de validação
+        try:
+            cost = float(cost)
+            price = float(price)
+        except ValueError:
+            print("Custo e preço devem ser números válidos.")
+            return
+
+        if not quantity.isdigit():
+            print("Quantidade deve ser um número inteiro.")
+            return
+
+        if product_name.strip() == "":
+            print("O nome do produto não pode estar vazio.")
+            return
+
+        if int(quantity) <= 0:
+            print("A quantidade deve ser maior que zero.")
+            return
+
+        # Cadastro do produto se todas as validações forem atendidas
         if product_name and cost and price and category and quantity:
             try:
                 # Atualiza a lista de dados
-                table_data.append([len(table_data), product_name, category, cost, price, quantity])
+                table_data.append([len(table_data), product_name, category, f"{cost:.2f}", f"{price:.2f}", quantity])
                 update_orders_table()  # Reconstrói a tabela
+
+                # Limpa os campos de entrada após o cadastro
+                product_name_entry.delete(0, 'end')
+                cost_entry.delete(0, 'end')
+                price_entry.delete(0, 'end')
+                quantity_entry.delete(0, 'end')
+                category_var.set(category_options[0])  # Reseta para a primeira categoria
+
                 show_frame(orders_frame)  # Volta para a tela de produtos
             except Exception as e:
                 print(f"Erro ao adicionar o produto: {e}")
@@ -490,6 +518,8 @@ def create_create_product_page():
 
     CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=add_product).pack(side="left", anchor="se", pady=(30, 0), padx=(20, 10))
     CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: show_frame(orders_frame)).pack(side="left", anchor="se", pady=(30, 0), padx=(10, 27))
+
+
 def create_search_product_page():
     CTkLabel(master=search_product_frame, text="Buscar Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29, 0), padx=27)
 
