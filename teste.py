@@ -5,7 +5,7 @@ import tkinter
 
 
 table_data = [
-    ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Quantidade"]
+    ["Código", "Nome", "Categoria", "Custo de Compra", "Preço sugerido", "Quantidade", "Estoque Mínimo", "Estoque Máximo"]
 ]
 
 #teste
@@ -54,7 +54,7 @@ def create_sidebar():
 # Função para criar as frames principais
 def create_main_frames():
     global dashboard_frame, orders_frame, exit_frame, settings_frame, customer_frame, new_order_frame,seller_frame, factory_frame, enter_frame
-    global create_product_frame, search_product_frame, delete_product_frame, edit_product_frame, category_frame,forgot_password_frame
+    global create_product_frame, search_product_frame, delete_product_frame, edit_product_frame, category_frame,forgot_password_frame, error_frame
 
 
     dashboard_frame = CTkFrame(master=main_view, fg_color="white")
@@ -68,6 +68,8 @@ def create_main_frames():
     new_order_frame = CTkFrame(master=main_view, fg_color="white") 
     category_frame = CTkFrame(master=main_view, fg_color="white") 
     forgot_password_frame = CTkFrame(master=main_view, fg_color="white") 
+    error_frame = CTkFrame(master=main_view, fg_color="white") 
+
     
     #Botoes dos Produtos 
     create_product_frame = CTkFrame(master=main_view, fg_color="white")
@@ -78,7 +80,7 @@ def create_main_frames():
 
     for frame in (dashboard_frame, orders_frame, exit_frame, settings_frame, customer_frame, 
                   new_order_frame, seller_frame, factory_frame, enter_frame, create_product_frame, search_product_frame, 
-                  delete_product_frame, edit_product_frame,category_frame, forgot_password_frame):
+                  delete_product_frame, edit_product_frame,category_frame, forgot_password_frame, error_frame):
         frame.place(x=0, y=0, relwidth=1, relheight=1)
 
     # Adicionar título para indicar qual tela está sendo exibida
@@ -438,6 +440,9 @@ def update_orders_table():
     table.edit_row(0, text_color="#fff", hover_color="#2A8C55")
     table.pack(expand=True)
 
+
+
+
 def create_create_product_page():
     CTkLabel(master=create_product_frame, text="Preencher Dados do Produto", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29, 0), padx=27)
 
@@ -462,9 +467,17 @@ def create_create_product_page():
     category_var = tkinter.StringVar(value=category_options[0])
     CTkOptionMenu(master=grid, variable=category_var, values=category_options, font=("Arial Bold", 14), text_color="#52A476", fg_color="#F0F0F0").grid(row=3, column=0, sticky="w", pady=(16, 0))
 
+    CTkLabel(master=grid, text="Estoque Máximo", font=("Arial Bold", 17), text_color="#52A476").grid(row=2, column=1, sticky="w", pady=(42, 0))
+    max_stock_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)
+    max_stock_entry.grid(row=3, column=1, pady=(21, 0), sticky="w")
+
     CTkLabel(master=grid, text="Quantidade", font=("Arial Bold", 17), text_color="#52A476").grid(row=4, column=0, sticky="w", pady=(42, 0))
     quantity_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)
     quantity_entry.grid(row=5, column=0, pady=(21, 0), sticky="w")
+
+    CTkLabel(master=grid, text="Estoque Mínimo", font=("Arial Bold", 17), text_color="#52A476").grid(row=4, column=1, sticky="w", pady=(42, 0))
+    minimum_stock_entry = CTkEntry(master=grid, fg_color="#F0F0F0", border_width=0, width=100)
+    minimum_stock_entry.grid(row=5, column=1, pady=(21, 0), sticky="w")
 
     actions = CTkFrame(master=create_product_frame, fg_color="transparent")
     actions.pack(fill="both", pady=(20, 0))
@@ -475,6 +488,8 @@ def create_create_product_page():
         price = price_entry.get()
         category = category_var.get()
         quantity = quantity_entry.get()
+        max_stock = max_stock_entry.get()
+        minimum_stock = minimum_stock_entry.get()
 
         # Verificações de validação
         try:
@@ -482,25 +497,39 @@ def create_create_product_page():
             price = float(price)
         except ValueError:
             print("Custo e preço devem ser números válidos.")
+            chamar_erro("Custo e preço devem ser números válidos.")
             return
 
         if not quantity.isdigit():
             print("Quantidade deve ser um número inteiro.")
+            chamar_erro("Quantidade deve ser um número inteiro.")
+            return
+        
+        if not max_stock.isdigit():
+            print("Maximo estoque deve ser um número inteiro.")
+            chamar_erro("Maximo estoque deve ser um número inteiro.")
+            return
+
+        if not minimum_stock.isdigit():
+            print("Estoque mninimo deve ser um número inteiro.")
+            chamar_erro("Estoque mninimo deve ser um número inteiro.")
             return
 
         if product_name.strip() == "":
             print("O nome do produto não pode estar vazio.")
+            chamar_erro("O nome do produto não pode estar vazio.")
             return
 
-        if int(quantity) <= 0:
-            print("A quantidade deve ser maior que zero.")
+        if int(quantity) < 0:
+            print("A quantidade deve ser maior ou igual a zero.")
+            chamar_erro("A quantidade deve ser maior ou igual a zero.")
             return
 
         # Cadastro do produto se todas as validações forem atendidas
-        if product_name and cost and price and category and quantity:
+        if product_name and cost and price and category and quantity and max_stock and minimum_stock:
             try:
                 # Atualiza a lista de dados
-                table_data.append([len(table_data), product_name, category, f"{cost:.2f}", f"{price:.2f}", quantity])
+                table_data.append([len(table_data), product_name, category, f"{cost:.2f}", f"{price:.2f}", quantity, max_stock, minimum_stock])
                 update_orders_table()  # Reconstrói a tabela
 
                 # Limpa os campos de entrada após o cadastro
@@ -508,6 +537,8 @@ def create_create_product_page():
                 cost_entry.delete(0, 'end')
                 price_entry.delete(0, 'end')
                 quantity_entry.delete(0, 'end')
+                max_stock_entry.delete(0, 'end')
+                minimum_stock_entry.delete(0, 'end')
                 category_var.set(category_options[0])  # Reseta para a primeira categoria
 
                 show_frame(orders_frame)  # Volta para a tela de produtos
@@ -632,6 +663,10 @@ def create_login_screen():
     CTkButton(master=button_frame, text="Esqueci minha senha", font=("Arial", 12), text_color="#2A8C55", fg_color="transparent",
               hover_color="#eeeeee", command=forgot_password).pack(side="left", padx=10)
 
+def chamar_erro(erro):
+    create_error_frame(erro)
+    show_frame(error_frame)
+
 def create_forgot_password():
     CTkLabel(master=forgot_password_frame, text="Esqueci Minha Senha", font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
 
@@ -647,6 +682,21 @@ def create_forgot_password():
     CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: print("confirmado")).pack(side="left", pady=(30,0), padx=(0, 10))
 
     CTkButton(master=actions, text="Cancelar", width=300, fg_color="transparent", font=("Arial Bold", 17), border_color="#FF0000", hover_color="#eee", border_width=2, text_color="#FF0000", command=lambda: login_frame.tkraise()).pack(side="left", pady=(30,0), padx=(10,0))
+
+
+def create_error_frame(erro):
+    for widget in error_frame.winfo_children():
+        widget.destroy()
+    CTkLabel(master=error_frame, text=erro, font=("Arial Black", 25), text_color="#2A8C55").pack(anchor="nw", pady=(29,0), padx=27)
+    
+
+    actions = CTkFrame(master=error_frame, fg_color="transparent")
+    actions.pack(fill="x", pady=(20, 0), padx=27)  # Ajuste o espaçamento com o Entry
+
+    # Alinha os botões com o Entry acima, mantendo-os lado a lado
+    CTkButton(master=actions, text="Confirmar", width=300, font=("Arial Bold", 17), hover_color="#207244", fg_color="#2A8C55", text_color="#fff", command=lambda: show_frame(orders_frame)).pack(side="left", pady=(30,0), padx=(0, 10))
+
+
 
 
 # Inicialização principal
